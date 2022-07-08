@@ -37,7 +37,9 @@ public class Minesweeper : MonoBehaviour
             }
         }
 
-        for(var i = 0; i < _mineCount; i++)
+        var mineCount = Mathf.Min(_mineCount, _cells.Length);
+
+        for(var i = 0; i < mineCount; i++)
         {
             SetUpMine();
         }
@@ -45,6 +47,7 @@ public class Minesweeper : MonoBehaviour
 
     private void OnValidate()
     {
+        // 最低でも1マスは地雷が置かれないマスにする
         if(_mineCount > (_rows * _columns) - 1)
         {
             _mineCount = (_rows * _columns) - 1;
@@ -53,17 +56,19 @@ public class Minesweeper : MonoBehaviour
 
     private void SetUpMine()
     {
+        // ランダムで座標を指定する
         var row = Random.Range(0, _rows);
         var column = Random.Range(0, _columns);
-
-        if (_cells[row,column].CellState == CellState.Mine)
+        
+        if (_cells[row,column].MineCounter == MineCounter.Mine) // もしすでに地雷が設置されていたらやり直す
         {
             SetUpMine();
         }
         else
         {
-            _cells[row, column].CellState = CellState.Mine;
+            _cells[row, column].MineCounter = MineCounter.Mine;
 
+            // 周囲8マスのCellStateの数字を一つ上げる
             for (var r = -1; r <= 1; r++)
             {
                 var a = row + r;
@@ -74,12 +79,12 @@ public class Minesweeper : MonoBehaviour
                     var b = column + c;
                     if (b < 0 || b > _columns - 1) continue;
 
-                    if ((_cells[a, b].CellState == CellState.Mine) || (r == 0 && c == 0))
+                    if ((_cells[a, b].MineCounter == MineCounter.Mine) || (r == 0 && c == 0))
                     {
                         continue;
                     }
 
-                    _cells[a, b].CellState++;
+                    _cells[a, b].MineCounter++;
                 }
             }
         }

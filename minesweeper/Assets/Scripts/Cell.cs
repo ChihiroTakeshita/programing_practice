@@ -1,7 +1,8 @@
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
-public enum CellState
+public enum MineCounter
 {
     None = 0, // ‹ó
     One,
@@ -16,51 +17,86 @@ public enum CellState
     Mine = -1, // ’n—‹
 }
 
-public class Cell : MonoBehaviour
+public class Cell : MonoBehaviour, IPointerClickHandler
 {
     [SerializeField]
     private Text _view = null;
 
-    [SerializeField, DisableInInspector]
-    private CellState _cellState = CellState.None;
+    [SerializeField]
+    private Image _cellImage;
 
-    public CellState CellState
+    [SerializeField, DisableInInspector]
+    private MineCounter _mineCounter = MineCounter.None;
+
+    private CellState _state = CellState.Close;
+
+    public MineCounter MineCounter
     {
-        get => _cellState;
+        get => _mineCounter;
         set
         {
-            _cellState = value;
-            OnCellStateChanged();
+            _mineCounter = value;
+            OnStateChanged();
         }
     }
 
     private void Start()
     {
-        OnCellStateChanged();
+        _cellImage = GetComponent<Image>();
+        OnStateChanged();
     }
 
     private void OnValidate()
     {
-        OnCellStateChanged();
+        OnStateChanged();
     }
 
-    private void OnCellStateChanged()
+    private void OnStateChanged()
     {
         if (_view == null) return;
-
-        switch (_cellState)
+        switch(_state)
         {
-            case CellState.None:
+            case CellState.Close:
                 _view.text = "";
+                _cellImage.color = Color.cyan;
                 break;
-            case CellState.Mine:
-                _view.color = Color.red;
-                _view.text = "x";
+            case CellState.Open:
+                _cellImage.color = Color.white;
+                switch (_mineCounter)
+                {
+                    case MineCounter.None:
+                        _view.text = "";
+                        break;
+                    case MineCounter.Mine:
+                        _view.color = Color.red;
+                        _view.text = "x";
+                        break;
+                    default:
+                        _view.color = Color.blue;
+                        _view.text = ((int)_mineCounter).ToString();
+                        break;
+                }
+                break;
+            case CellState.Flag:
+                _view.text = "F";
+                _cellImage.color = Color.cyan;
                 break;
             default:
-                _view.color = Color.blue;
-                _view.text = ((int)_cellState).ToString();
                 break;
         }
+    }
+
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        Debug.Log(eventData.pointerCurrentRaycast.gameObject.GetComponentInParent<Cell>().MineCounter);
+        _state = CellState.Open;
+        OnStateChanged();
+    }
+
+    private enum CellState
+    {
+        Close,
+        Open,
+        Flag
     }
 }
