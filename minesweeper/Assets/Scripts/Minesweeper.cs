@@ -45,9 +45,9 @@ public class Minesweeper : MonoBehaviour
 
     private void OnValidate()
     {
-        if(_mineCount > _rows * _columns)
+        if(_mineCount > (_rows * _columns) - 1)
         {
-            _mineCount = _rows * _columns;
+            _mineCount = (_rows * _columns) - 1;
         }
     }
 

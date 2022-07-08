@@ -21,7 +21,7 @@ public class Cell : MonoBehaviour
     [SerializeField]
     private Text _view = null;
 
-    [SerializeField]
+    [SerializeField, DisableInInspector]
     private CellState _cellState = CellState.None;
 
     public CellState CellState
