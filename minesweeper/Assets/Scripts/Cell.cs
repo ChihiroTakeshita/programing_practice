@@ -19,7 +19,7 @@ public enum MineCounter
 
 
 
-public class Cell : MonoBehaviour, IPointerClickHandler
+public class Cell : MonoBehaviour
 {
     [SerializeField]
     private Text _view = null;
@@ -99,9 +99,9 @@ public class Cell : MonoBehaviour, IPointerClickHandler
         }
     }
 
-    public void OnPointerClick(PointerEventData eventData)
+    public void OnClick(PointerEventData eventData)
     {
-        switch(State)
+        switch (State)
         {
             case CellState.Close:
                 if (eventData.button == PointerEventData.InputButton.Left)
@@ -114,7 +114,7 @@ public class Cell : MonoBehaviour, IPointerClickHandler
                 }
                 break;
             case CellState.Flag:
-                if(eventData.button == PointerEventData.InputButton.Right)
+                if (eventData.button == PointerEventData.InputButton.Right)
                 {
                     State = CellState.Close;
                 }

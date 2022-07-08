@@ -1,8 +1,9 @@
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 [RequireComponent(typeof(GridLayoutGroup))]
-public class Minesweeper : MonoBehaviour
+public class Minesweeper : MonoBehaviour, IPointerClickHandler
 {
     [SerializeField]
     private int _rows = 10;
@@ -87,6 +88,15 @@ public class Minesweeper : MonoBehaviour
                     _cells[a, b].MineCounter++;
                 }
             }
+        }
+    }
+
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        var cell = eventData.pointerCurrentRaycast.gameObject.GetComponent<Cell>();
+        if(cell)
+        {
+            cell.OnClick(eventData);
         }
     }
 }
