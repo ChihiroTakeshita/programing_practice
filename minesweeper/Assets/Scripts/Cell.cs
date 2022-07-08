@@ -17,6 +17,8 @@ public enum MineCounter
     Mine = -1, // ’n—‹
 }
 
+
+
 public class Cell : MonoBehaviour, IPointerClickHandler
 {
     [SerializeField]
@@ -40,6 +42,16 @@ public class Cell : MonoBehaviour, IPointerClickHandler
         }
     }
 
+    private CellState State 
+    { 
+        get => _state; 
+        set
+        {
+            _state = value;
+            OnStateChanged();
+        }
+    }
+
     private void Start()
     {
         _cellImage = GetComponent<Image>();
@@ -54,7 +66,7 @@ public class Cell : MonoBehaviour, IPointerClickHandler
     private void OnStateChanged()
     {
         if (_view == null) return;
-        switch(_state)
+        switch(State)
         {
             case CellState.Close:
                 _view.text = "";
@@ -78,6 +90,7 @@ public class Cell : MonoBehaviour, IPointerClickHandler
                 }
                 break;
             case CellState.Flag:
+                _view.color = Color.black;
                 _view.text = "F";
                 _cellImage.color = Color.cyan;
                 break;
@@ -88,9 +101,29 @@ public class Cell : MonoBehaviour, IPointerClickHandler
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        Debug.Log(eventData.pointerCurrentRaycast.gameObject.GetComponentInParent<Cell>().MineCounter);
-        _state = CellState.Open;
-        OnStateChanged();
+        switch(State)
+        {
+            case CellState.Close:
+                if (eventData.button == PointerEventData.InputButton.Left)
+                {
+                    State = CellState.Open;
+                }
+                else if (eventData.button == PointerEventData.InputButton.Right)
+                {
+                    State = CellState.Flag;
+                }
+                break;
+            case CellState.Flag:
+                if(eventData.button == PointerEventData.InputButton.Right)
+                {
+                    State = CellState.Close;
+                }
+                break;
+            case CellState.Open:
+                break;
+            default:
+                break;
+        }
     }
 
     private enum CellState
