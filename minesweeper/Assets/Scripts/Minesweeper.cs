@@ -6,16 +6,22 @@ using UnityEngine.EventSystems;
 public class Minesweeper : MonoBehaviour, IPointerClickHandler
 {
     [SerializeField]
+    private GridLayoutGroup _gridLayoutGroup = null;
+
+    [SerializeField]
+    private GameObject _gameClearPanel;
+
+    [SerializeField]
+    private GameObject _gameOverPanel;
+
+    [SerializeField]
+    private Cell _cellPrefab = null;
+
+    [SerializeField]
     private int _rows = 10;
 
     [SerializeField]
     private int _columns = 10;
-
-    [SerializeField]
-    private GridLayoutGroup _gridLayoutGroup = null;
-
-    [SerializeField]
-    private Cell _cellPrefab = null;
 
     [SerializeField, Range(0, 50)]
     private int _percentageOfMine;
@@ -125,10 +131,11 @@ public class Minesweeper : MonoBehaviour, IPointerClickHandler
     private void GameOver()
     {
         Debug.Log("Game Over");
+        _gameOverPanel.SetActive(true);
     }
 
     private void GameClear()
     {
-        Debug.Log("Game Clear");
+        _gameClearPanel.SetActive(true);
     }
 }
