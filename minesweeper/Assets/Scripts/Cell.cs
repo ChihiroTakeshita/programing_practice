@@ -17,7 +17,12 @@ public enum MineCounter
     Mine = -1, // ’n—‹
 }
 
-
+public enum CellState
+{
+    Close,
+    Open,
+    Flag
+}
 
 public class Cell : MonoBehaviour
 {
@@ -42,10 +47,10 @@ public class Cell : MonoBehaviour
         }
     }
 
-    private CellState State 
+    public CellState State 
     { 
         get => _state; 
-        set
+         private set
         {
             _state = value;
             OnStateChanged();
@@ -99,14 +104,19 @@ public class Cell : MonoBehaviour
         }
     }
 
-    public void OnClick(PointerEventData.InputButton button)
+    public bool OnClick(PointerEventData.InputButton button)
     {
+        bool isMine = false;
         switch (State)
         {
             case CellState.Close:
                 if (button == PointerEventData.InputButton.Left)
                 {
                     State = CellState.Open;
+                    if(MineCounter == MineCounter.Mine)
+                    {
+                        isMine = true;
+                    }
                 }
                 else if (button == PointerEventData.InputButton.Right)
                 {
@@ -124,12 +134,6 @@ public class Cell : MonoBehaviour
             default:
                 break;
         }
-    }
-
-    private enum CellState
-    {
-        Close,
-        Open,
-        Flag
+        return isMine;
     }
 }

@@ -318,10 +318,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _rows: 10
-  _columns: 10
+  _columns: 15
   _gridLayoutGroup: {fileID: 145155730}
   _cellPrefab: {fileID: 8887940756754262408, guid: 31480b36831c5a64b82629d32cf7284d, type: 3}
-  _percentageOfMine: 20
+  _percentageOfMine: 10
 --- !u!1 &692043377
 GameObject:
   m_ObjectHideFlags: 0

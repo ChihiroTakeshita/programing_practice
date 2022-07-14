@@ -99,7 +99,36 @@ public class Minesweeper : MonoBehaviour, IPointerClickHandler
         var cell = eventData.pointerCurrentRaycast.gameObject.GetComponent<Cell>();
         if(cell)
         {
-            cell.OnClick(eventData.button);
+            CheckGameFinish(cell.OnClick(eventData.button));
         }
+    }
+
+    private void CheckGameFinish(bool isGameOver)
+    {
+        if(isGameOver)
+        {
+            GameOver();
+        }
+        else
+        {
+            foreach(var c in _cells)
+            {
+                if(c.MineCounter != MineCounter.Mine && (c.State == CellState.Close || c.State == CellState.Flag))
+                {
+                    return;
+                }
+            }
+            GameClear();
+        }
+    }
+
+    private void GameOver()
+    {
+        Debug.Log("Game Over");
+    }
+
+    private void GameClear()
+    {
+        Debug.Log("Game Clear");
     }
 }
