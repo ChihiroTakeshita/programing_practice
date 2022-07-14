@@ -17,13 +17,16 @@ public class Minesweeper : MonoBehaviour, IPointerClickHandler
     [SerializeField]
     private Cell _cellPrefab = null;
 
-    [SerializeField]
-    private int _mineCount = 10;
+    [SerializeField, Range(0, 50)]
+    private int _percentageOfMine;
+
+    private int _mineCount;
 
     private Cell[,] _cells;
 
     private void Start()
     {
+        _mineCount = Mathf.FloorToInt(_rows * _columns * _percentageOfMine * 0.01f);
         _gridLayoutGroup.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
         _gridLayoutGroup.constraintCount = _columns;
 
