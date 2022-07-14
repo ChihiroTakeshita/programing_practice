@@ -96,7 +96,7 @@ public class Minesweeper : MonoBehaviour, IPointerClickHandler
         var cell = eventData.pointerCurrentRaycast.gameObject.GetComponent<Cell>();
         if(cell)
         {
-            cell.OnClick(eventData);
+            cell.OnClick(eventData.button);
         }
     }
 }

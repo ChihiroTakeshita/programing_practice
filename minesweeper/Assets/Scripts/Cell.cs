@@ -99,22 +99,22 @@ public class Cell : MonoBehaviour
         }
     }
 
-    public void OnClick(PointerEventData eventData)
+    public void OnClick(PointerEventData.InputButton button)
     {
         switch (State)
         {
             case CellState.Close:
-                if (eventData.button == PointerEventData.InputButton.Left)
+                if (button == PointerEventData.InputButton.Left)
                 {
                     State = CellState.Open;
                 }
-                else if (eventData.button == PointerEventData.InputButton.Right)
+                else if (button == PointerEventData.InputButton.Right)
                 {
                     State = CellState.Flag;
                 }
                 break;
             case CellState.Flag:
-                if (eventData.button == PointerEventData.InputButton.Right)
+                if (button == PointerEventData.InputButton.Right)
                 {
                     State = CellState.Close;
                 }
