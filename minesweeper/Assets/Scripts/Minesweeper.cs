@@ -27,8 +27,8 @@ public class Minesweeper : MonoBehaviour, IPointerClickHandler
     private int _percentageOfMine;
 
     private int _mineCount;
-
     private Cell[,] _cells;
+    private bool _isFirst = true;
 
     private void Start()
     {
@@ -47,12 +47,12 @@ public class Minesweeper : MonoBehaviour, IPointerClickHandler
             }
         }
 
-        var mineCount = Mathf.Min(_mineCount, _cells.Length);
+        //var mineCount = Mathf.Min(_mineCount, _cells.Length);
 
-        for(var i = 0; i < mineCount; i++)
-        {
-            SetUpMine();
-        }
+        //for(var i = 0; i < mineCount; i++)
+        //{
+        //    SetUpMine();
+        //}
     }
 
     private void OnValidate()
@@ -70,7 +70,7 @@ public class Minesweeper : MonoBehaviour, IPointerClickHandler
         var row = Random.Range(0, _rows);
         var column = Random.Range(0, _columns);
         
-        if (_cells[row,column].MineCounter == MineCounter.Mine) // もしすでに地雷が設置されていたらやり直す
+        if (_cells[row,column].MineCounter == MineCounter.Mine || _cells[row, column].State == CellState.Open) // もしすでに地雷が設置されていたか開かれているならやり直す
         {
             SetUpMine();
         }
@@ -105,13 +105,26 @@ public class Minesweeper : MonoBehaviour, IPointerClickHandler
         var cell = eventData.pointerCurrentRaycast.gameObject.GetComponent<Cell>();
         if(cell)
         {
-            CheckGameFinish(cell.OnClick(eventData.button));
+            bool isMine = cell.OnClick(eventData.button);
+
+            if(_isFirst)
+            {
+                _isFirst = false;
+                var mineCount = Mathf.Min(_mineCount, _cells.Length);
+
+                for (var i = 0; i < mineCount; i++)
+                {
+                    SetUpMine();
+                }
+            }
+
+            CheckGameFinish(isMine);
         }
     }
 
-    private void CheckGameFinish(bool isGameOver)
+    private void CheckGameFinish(bool isMine)
     {
-        if(isGameOver)
+        if(isMine)
         {
             GameOver();
         }
