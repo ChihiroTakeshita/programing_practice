@@ -323,7 +323,7 @@ MonoBehaviour:
   _cellPrefab: {fileID: 8887940756754262408, guid: 31480b36831c5a64b82629d32cf7284d, type: 3}
   _rows: 15
   _columns: 15
-  _percentageOfMine: 10
+  _percentageOfMine: 15
 --- !u!1 &223954474
 GameObject:
   m_ObjectHideFlags: 0
