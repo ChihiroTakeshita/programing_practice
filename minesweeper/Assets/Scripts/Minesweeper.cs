@@ -188,6 +188,13 @@ public class Minesweeper : MonoBehaviour, IPointerClickHandler
     private void GameOver()
     {
         Debug.Log("Game Over");
+        foreach(var c in _cells)
+        {
+            if(c.MineCounter == MineCounter.Mine)
+            {
+                c.State = CellState.Open;
+            }
+        }
         _gameOverPanel.SetActive(true);
     }
 
