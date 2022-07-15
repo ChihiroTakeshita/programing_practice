@@ -43,6 +43,8 @@ public class Minesweeper : MonoBehaviour, IPointerClickHandler
             {
                 var cell = Instantiate(_cellPrefab, _gridLayoutGroup.transform);
                 cell.name = $"({r}, {c})";
+                cell.IndexR = r;
+                cell.IndexC = c;
                 _cells[r, c] = cell;
             }
         }
@@ -55,24 +57,15 @@ public class Minesweeper : MonoBehaviour, IPointerClickHandler
         //}
     }
 
-    private void OnValidate()
-    {
-        // 最低でも1マスは地雷が置かれないマスにする
-        if(_mineCount > (_rows * _columns) - 1)
-        {
-            _mineCount = (_rows * _columns) - 1;
-        }
-    }
-
-    private void SetUpMine()
+    private void SetUpMine(int firstIndexR, int firstIndexC)
     {
         // ランダムで座標を指定する
         var row = Random.Range(0, _rows);
         var column = Random.Range(0, _columns);
         
-        if (_cells[row,column].MineCounter == MineCounter.Mine || _cells[row, column].State == CellState.Open) // もしすでに地雷が設置されていたか開かれているならやり直す
+        if (_cells[row,column].MineCounter == MineCounter.Mine || (row == firstIndexR && column == firstIndexC)) // もしすでに地雷が設置されていたか最初に選んだセルならやり直す
         {
-            SetUpMine();
+            SetUpMine(firstIndexR, firstIndexC);
         }
         else
         {
@@ -105,21 +98,72 @@ public class Minesweeper : MonoBehaviour, IPointerClickHandler
         var cell = eventData.pointerCurrentRaycast.gameObject.GetComponent<Cell>();
         if(cell)
         {
-            bool isMine = cell.OnClick(eventData.button);
-
-            if(_isFirst)
+            if(_isFirst && eventData.button == PointerEventData.InputButton.Left)
             {
                 _isFirst = false;
                 var mineCount = Mathf.Min(_mineCount, _cells.Length);
 
                 for (var i = 0; i < mineCount; i++)
                 {
-                    SetUpMine();
+                    SetUpMine(cell.IndexR, cell.IndexC);
                 }
             }
 
+            bool isMine = ChangeCellState(cell, eventData.button);
+
             CheckGameFinish(isMine);
         }
+    }
+
+    private bool ChangeCellState(Cell cell, PointerEventData.InputButton button)
+    {
+        bool isMine = false;
+        switch (cell.State)
+        {
+            case CellState.Close:
+                if (button == PointerEventData.InputButton.Left)
+                {
+                    cell.State = CellState.Open; 
+                    if (cell.MineCounter == MineCounter.None)
+                    {
+                        var row = cell.IndexR;
+                        var column = cell.IndexC;
+                        for (var r = -1; r <= 1; r++)
+                        {
+                            var a = row + r;
+                            if (a < 0 || a > _rows - 1) continue;
+
+                            for (var c = -1; c <= 1; c++)
+                            {
+                                var b = column + c;
+                                if (b < 0 || b > _columns - 1) continue;
+
+                                ChangeCellState(_cells[a, b], button);
+                            }
+                        }
+                    }
+                    else if (cell.MineCounter == MineCounter.Mine)
+                    {
+                        isMine = true;
+                    }
+                }
+                else if (button == PointerEventData.InputButton.Right)
+                {
+                    cell.State = CellState.Flag;
+                }
+                break;
+            case CellState.Flag:
+                if (button == PointerEventData.InputButton.Right)
+                {
+                    cell.State = CellState.Close;
+                }
+                break;
+            case CellState.Open:
+                break;
+            default:
+                break;
+        }
+        return isMine;
     }
 
     private void CheckGameFinish(bool isMine)

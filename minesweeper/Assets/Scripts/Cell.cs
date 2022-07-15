@@ -36,6 +36,8 @@ public class Cell : MonoBehaviour
     private MineCounter _mineCounter = MineCounter.None;
 
     private CellState _state = CellState.Close;
+    private int _indexR;
+    private int _indexC;
 
     public MineCounter MineCounter
     {
@@ -50,12 +52,15 @@ public class Cell : MonoBehaviour
     public CellState State 
     { 
         get => _state; 
-         private set
+        set
         {
             _state = value;
             OnStateChanged();
         }
     }
+
+    public int IndexR { get => _indexR; set => _indexR = value; }
+    public int IndexC { get => _indexC; set => _indexC = value; }
 
     private void Start()
     {
@@ -104,36 +109,36 @@ public class Cell : MonoBehaviour
         }
     }
 
-    public bool OnClick(PointerEventData.InputButton button)
-    {
-        bool isMine = false;
-        switch (State)
-        {
-            case CellState.Close:
-                if (button == PointerEventData.InputButton.Left)
-                {
-                    State = CellState.Open;
-                    if(MineCounter == MineCounter.Mine)
-                    {
-                        isMine = true;
-                    }
-                }
-                else if (button == PointerEventData.InputButton.Right)
-                {
-                    State = CellState.Flag;
-                }
-                break;
-            case CellState.Flag:
-                if (button == PointerEventData.InputButton.Right)
-                {
-                    State = CellState.Close;
-                }
-                break;
-            case CellState.Open:
-                break;
-            default:
-                break;
-        }
-        return isMine;
-    }
+    //public bool OnClick(PointerEventData.InputButton button)
+    //{
+    //    bool isMine = false;
+    //    switch (State)
+    //    {
+    //        case CellState.Close:
+    //            if (button == PointerEventData.InputButton.Left)
+    //            {
+    //                State = CellState.Open;
+    //                if(MineCounter == MineCounter.Mine)
+    //                {
+    //                    isMine = true;
+    //                }
+    //            }
+    //            else if (button == PointerEventData.InputButton.Right)
+    //            {
+    //                State = CellState.Flag;
+    //            }
+    //            break;
+    //        case CellState.Flag:
+    //            if (button == PointerEventData.InputButton.Right)
+    //            {
+    //                State = CellState.Close;
+    //            }
+    //            break;
+    //        case CellState.Open:
+    //            break;
+    //        default:
+    //            break;
+    //    }
+    //    return isMine;
+    //}
 }
