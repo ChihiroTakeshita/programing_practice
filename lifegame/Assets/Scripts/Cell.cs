@@ -2,9 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 [RequireComponent(typeof(Image))]
-public class Cell : MonoBehaviour
+public class Cell : MonoBehaviour, IPointerClickHandler
 {
     [SerializeField, Tooltip("ê∂Ç´ÇƒÇ¢ÇÈÇ∆Ç´ÇÃêF")]
     private Color32 _aliveColor;
@@ -45,5 +46,14 @@ public class Cell : MonoBehaviour
         }
 
         return color;
+    }
+
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        var cell = eventData.pointerCurrentRaycast.gameObject.GetComponent<Cell>();
+        if(cell != null)
+        {
+            cell.IsAlive = !cell.IsAlive;
+        }
     }
 }
