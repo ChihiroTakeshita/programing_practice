@@ -1287,6 +1287,7 @@ MonoBehaviour:
   _row: 55
   _column: 90
   _autoInterval: 0.1
+  _percentageOfLiving: 65.5
 --- !u!114 &1262862475
 MonoBehaviour:
   m_ObjectHideFlags: 0

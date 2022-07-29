@@ -10,14 +10,17 @@ public class CellManager : MonoBehaviour, IPointerClickHandler
     [SerializeField]
     private Cell _cellPrefab;
 
-    [SerializeField]
+    [SerializeField, RuntimeDisable]
     private uint _row;
 
-    [SerializeField]
+    [SerializeField, RuntimeDisable]
     private uint _column;
 
     [SerializeField]
     private float _autoInterval;
+
+    [SerializeField, Range(0, 100)]
+    private float _percentageOfLiving;
 
     private GridLayoutGroup _gridLayoutGroup;
     private Cell[,] _cells;
@@ -152,7 +155,7 @@ public class CellManager : MonoBehaviour, IPointerClickHandler
     public void OnClickRandom()
     {
         KillAllCells();
-        SetRandom(60);
+        SetRandom(_percentageOfLiving);
     }
 
     public void OnClickClear()
