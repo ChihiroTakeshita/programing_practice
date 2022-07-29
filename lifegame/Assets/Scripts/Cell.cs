@@ -2,10 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.EventSystems;
 
 [RequireComponent(typeof(Image))]
-public class Cell : MonoBehaviour, IPointerClickHandler
+public class Cell : MonoBehaviour
 {
     [SerializeField, Tooltip("¶‚«‚Ä‚¢‚é‚Æ‚«‚ÌF")]
     private Color32 _aliveColor;
@@ -15,6 +14,8 @@ public class Cell : MonoBehaviour, IPointerClickHandler
 
     private Image _image;
     private bool _isAlive = false;
+    private bool _isAliveNext = false;
+    private int _aroundLivingCell;
 
     public bool IsAlive
     {
@@ -25,6 +26,9 @@ public class Cell : MonoBehaviour, IPointerClickHandler
             _image.color = OnChageState(_isAlive);
         }
     }
+
+    public int AroundLivingCell { get => _aroundLivingCell; set => _aroundLivingCell = value; }
+    public bool IsAliveNext { get => _isAliveNext; set => _isAliveNext = value; }
 
     private void Start()
     {
@@ -48,12 +52,25 @@ public class Cell : MonoBehaviour, IPointerClickHandler
         return color;
     }
 
-    public void OnPointerClick(PointerEventData eventData)
+    public bool DetermineAliveNext()
     {
-        var cell = eventData.pointerCurrentRaycast.gameObject.GetComponent<Cell>();
-        if(cell != null)
+        bool aliveNext = false;
+
+        if(_isAlive)
         {
-            cell.IsAlive = !cell.IsAlive;
+            if(_aroundLivingCell > 1 && _aroundLivingCell < 4)
+            {
+                aliveNext = true;
+            }
         }
+        else
+        {
+            if (_aroundLivingCell == 3)
+            {
+                aliveNext = true;
+            }
+        }
+
+        return aliveNext;
     }
 }
