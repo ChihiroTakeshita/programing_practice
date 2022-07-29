@@ -152,7 +152,7 @@ public class CellManager : MonoBehaviour, IPointerClickHandler
     public void OnClickRandom()
     {
         KillAllCells();
-        SetRandom(45);
+        SetRandom(60);
     }
 
     public void OnClickClear()
@@ -190,7 +190,7 @@ public class CellManager : MonoBehaviour, IPointerClickHandler
             livingCount = Mathf.FloorToInt((_row * _column) * ((100 - percentageOfLiving) / 100));
             foreach (var cell in _cells)
             {
-                cell.IsAlive = true;
+                ChangeCellState(cell, true);
             }
         }
 
