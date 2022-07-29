@@ -27,7 +27,6 @@ public class CellManager : MonoBehaviour, IPointerClickHandler
     {
         _gridLayoutGroup = GetComponent<GridLayoutGroup>();
         _gridLayoutGroup.childAlignment = TextAnchor.MiddleCenter;
-        _gridLayoutGroup.cellSize = new Vector2(15, 15);
         _gridLayoutGroup.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
         _gridLayoutGroup.constraintCount = (int)_column;
         _cells = SetUpCells(_cellPrefab, (int)_row, (int)_column);
