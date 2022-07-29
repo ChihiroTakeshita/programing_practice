@@ -16,8 +16,12 @@ public class CellManager : MonoBehaviour, IPointerClickHandler
     [SerializeField]
     private uint _column;
 
+    [SerializeField]
+    private float _autoInterval;
+
     private GridLayoutGroup _gridLayoutGroup;
     private Cell[,] _cells;
+    private IEnumerator _autoCoroutine = null;
 
     private void Start()
     {
@@ -95,7 +99,7 @@ public class CellManager : MonoBehaviour, IPointerClickHandler
         }
     }
 
-    public void AdvanceNextGeneration()
+    private void AdvanceNextGeneration()
     {
         foreach(var cell in _cells)
         {
@@ -110,6 +114,38 @@ public class CellManager : MonoBehaviour, IPointerClickHandler
             {
                 InformLiving(cell);
             }
+        }
+    }
+
+    public void StartAuto()
+    {
+        if(_autoCoroutine == null)
+        {
+            _autoCoroutine = AutoAdvance(_autoInterval);
+            StartCoroutine(_autoCoroutine);
+        }
+    }
+
+    public void StopAuto()
+    {
+        StopCoroutine(_autoCoroutine);
+        _autoCoroutine = null;
+    }
+
+    public void OneStep()
+    {
+        if(_autoCoroutine == null)
+        {
+            AdvanceNextGeneration();
+        }
+    }
+
+    private IEnumerator AutoAdvance(float interval)
+    {
+        while(true)
+        {
+            AdvanceNextGeneration();
+            yield return new WaitForSeconds(interval);
         }
     }
 }
