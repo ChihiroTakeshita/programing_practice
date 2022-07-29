@@ -83,6 +83,16 @@ public class CellManager : MonoBehaviour, IPointerClickHandler
         InformLiving(cell);
     }
 
+    private void ChangeCellState(Cell cell, bool isAlive)
+    {
+        bool wasAlive = cell.IsAlive;
+        cell.IsAlive = isAlive;
+        if(wasAlive != isAlive)
+        {
+            InformLiving(cell);
+        }
+    }
+
     private void InformLiving(Cell cell)
     {
         var index = GetCellIndex(_cells, cell);
@@ -108,16 +118,17 @@ public class CellManager : MonoBehaviour, IPointerClickHandler
 
         foreach(var cell in _cells)
         {
-            bool wasAlive = cell.IsAlive;
-            cell.IsAlive = cell.IsAliveNext;
-            if (wasAlive != cell.IsAliveNext)
-            {
-                InformLiving(cell);
-            }
+            ChangeCellState(cell, cell.IsAliveNext);
+            //bool wasAlive = cell.IsAlive;
+            //cell.IsAlive = cell.IsAliveNext;
+            //if (wasAlive != cell.IsAliveNext)
+            //{
+            //    InformLiving(cell);
+            //}
         }
     }
 
-    public void StartAuto()
+    public void OnClickStart()
     {
         if(_autoCoroutine == null)
         {
@@ -126,18 +137,28 @@ public class CellManager : MonoBehaviour, IPointerClickHandler
         }
     }
 
-    public void StopAuto()
+    public void OnClickStop()
     {
         StopCoroutine(_autoCoroutine);
         _autoCoroutine = null;
     }
 
-    public void OneStep()
+    public void OnClickNext()
     {
         if(_autoCoroutine == null)
         {
             AdvanceNextGeneration();
         }
+    }
+    public void OnClickRandom()
+    {
+        KillAllCells();
+        SetRandom(45);
+    }
+
+    public void OnClickClear()
+    {
+        KillAllCells();
     }
 
     private IEnumerator AutoAdvance(float interval)
@@ -146,6 +167,54 @@ public class CellManager : MonoBehaviour, IPointerClickHandler
         {
             AdvanceNextGeneration();
             yield return new WaitForSeconds(interval);
+        }
+    }
+
+    private void SetRandom(float percentageOfLiving)
+    {
+        if(percentageOfLiving < 0 || percentageOfLiving > 100)
+        {
+            Debug.LogError("ïsê≥Ç»ílÇ≈Ç∑");
+            return;
+        }
+
+        bool isAlive;
+        int livingCount;
+        if(percentageOfLiving < 50)
+        {
+            isAlive = true;
+            livingCount = Mathf.FloorToInt((_row * _column) * (percentageOfLiving / 100));
+        }
+        else
+        {
+            isAlive = false;
+            livingCount = Mathf.FloorToInt((_row * _column) * ((100 - percentageOfLiving) / 100));
+            foreach (var cell in _cells)
+            {
+                cell.IsAlive = true;
+            }
+        }
+
+        for(int i = 0; i < livingCount; i++)
+        {
+            while(true)
+            {
+                int r = Random.Range(0, (int)_row);
+                int c = Random.Range(0, (int)_column);
+                if (_cells[r, c].IsAlive != isAlive)
+                {
+                    ChangeCellState(_cells[r, c], isAlive);
+                    break;
+                }
+            }
+        }
+    }
+
+    private void KillAllCells()
+    {
+        foreach(var cell in _cells)
+        {
+            ChangeCellState(cell, false);
         }
     }
 }
