@@ -10,6 +10,9 @@ public class CellManager : MonoBehaviour, IPointerClickHandler
     [SerializeField]
     private Cell _cellPrefab;
 
+    [SerializeField]
+    private GameObject _autoText;
+
     [SerializeField, RuntimeDisable]
     private uint _row;
 
@@ -137,12 +140,17 @@ public class CellManager : MonoBehaviour, IPointerClickHandler
             _autoCoroutine = AutoAdvance(_autoInterval);
             StartCoroutine(_autoCoroutine);
         }
+        _autoText.SetActive(true);
     }
 
     public void OnClickStop()
     {
-        StopCoroutine(_autoCoroutine);
-        _autoCoroutine = null;
+        if(_autoCoroutine != null)
+        {
+            StopCoroutine(_autoCoroutine);
+            _autoCoroutine = null;
+        }
+        _autoText.SetActive(false);
     }
 
     public void OnClickNext()
@@ -218,5 +226,7 @@ public class CellManager : MonoBehaviour, IPointerClickHandler
         {
             ChangeCellState(cell, false);
         }
+
+        OnClickStop();
     }
 }
